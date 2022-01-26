@@ -6,7 +6,7 @@ Solution to Advent of Code 2021: Day 1
 
 import pandas as pd
 
-input  = pd.read_csv('~/advent2021/input1', header=None)
+input  = pd.read_csv('input1', header=None)
 
 df = input.rename(columns={0:'depth'})
 

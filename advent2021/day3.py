@@ -7,7 +7,7 @@ Solution to Advent of Code 2021: Day 3
 import pandas as pd
 import numpy as np
 
-rep = pd.read_csv('~/advent2021/input3', squeeze = True, dtype = str, header=None)
+rep = pd.read_csv('input3', squeeze = True, dtype = str, header=None)
 
 df = np.full((1000,12), 0)
 df = pd.DataFrame(df)

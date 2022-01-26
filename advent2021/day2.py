@@ -6,7 +6,7 @@ Solution to Advent of Code 2021: Day 2
 
 import pandas as pd
 
-df  = pd.read_csv('~/advent2021/input2', names=['move'])
+df  = pd.read_csv('input2', names=['move'])
 
 df['encode'] = df['move']
 

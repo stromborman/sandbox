@@ -7,9 +7,9 @@ Solution to Advent of Code 2021: Day 4
 import pandas as pd
 import numpy as np
 
-nums = pd.read_csv('~/advent2021/input4', dtype = int, header=None, nrows=1)
+nums = pd.read_csv('input4', dtype = int, header=None, nrows=1)
 nums = nums.T.to_numpy()
-boards = pd.read_csv('~/advent2021/input4', header=None, skiprows=1, sep='\s+')
+boards = pd.read_csv('input4', header=None, skiprows=1, sep='\s+')
 
 B = np.full(100, fill_value= None)
 # B = np.empty(100)#, dtype=np.array)
