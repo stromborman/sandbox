@@ -8,8 +8,8 @@ import numpy as np
 from queue import Queue
 import pandas as pd
 
-input = np.genfromtxt('input9', delimiter=1 ,dtype=int)
-test = np.genfromtxt('input9_test', delimiter=1,dtype=int)
+input = np.genfromtxt('input09', delimiter=1 ,dtype=int)
+test = np.genfromtxt('input09_test', delimiter=1,dtype=int)
 
 def nbhd(i,j):
     return [ (i-1,j), (i+1,j), (i,j-1), (i,j+1) ]

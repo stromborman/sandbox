@@ -6,8 +6,8 @@ Solution to Advent of Code 2021: Day 6
 import numpy as np
 
 
-input_test = np.genfromtxt('input6_test', delimiter=',',dtype=int)
-input = np.genfromtxt('input6', delimiter=',',dtype=int)
+input_test = np.genfromtxt('input06_test', delimiter=',',dtype=int)
+input = np.genfromtxt('input06', delimiter=',',dtype=int)
 
 def day(a):
     b = a-1

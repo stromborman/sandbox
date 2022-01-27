@@ -7,10 +7,10 @@ Solution to Advent of Code 2021: Day 8
 import pandas as pd
 import numpy as np
 
-input = pd.read_csv('input8', header=None, sep='\s', engine='python')
+input = pd.read_csv('input08', header=None, sep='\s', engine='python')
 input = input.drop(columns = [10]).set_axis(np.arange(14),axis=1)
 
-test = pd.read_csv('input8_test', header=None, sep='\s', engine='python')
+test = pd.read_csv('input08_test', header=None, sep='\s', engine='python')
 test = test.drop(columns = [10]).set_axis(np.arange(14),axis=1)
 
 def to_len(df):
