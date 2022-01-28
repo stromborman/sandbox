@@ -72,4 +72,4 @@ def dumb_search(tar=test):
 def hit_count(tar=test):
     return len(dumb_search(tar))
 
-print('Answer to part1: '+str(hit_count(real)) )    
+print('Answer to part2: '+str(hit_count(real)) )    
