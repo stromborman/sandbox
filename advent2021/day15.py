@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Spyder Editor
-
 Solution to Advent of Code 2021: Day 15
 """
 from heapq import heappop, heappush
