@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from AdventUtils import read
 """
 Solution to Advent of Code 2020: Day 02
 """
-
-
-def read(filename):
-    with open(filename) as file:
-        return [line.strip() for line in file.readlines()]
 
 
 # lines look like: 'a0-a1 letter: pw'
@@ -30,4 +26,4 @@ for line in read('input02'):
         validpws2.append(pw)
 
 print('Answer to part1:', len(validpws1) )
-print('Answer to part2:', len(validpws2) )               
+print('Answer to part2:', len(validpws2) )

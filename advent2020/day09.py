@@ -5,12 +5,8 @@ Solution to Advent of Code 2020: Day 09
 """
 
 from itertools import combinations
+from AdventUtils import read_nums as read
 
-
-def read(filename):
-    with open(filename) as file:
-        return [ int(line.strip('\n')) for line in file.readlines()]
-            
 real = read('input09')
 
 def special(lst):
