@@ -76,10 +76,10 @@ test_ticks = error(test1)
 
 # fields = [f[1],f[2],...,f[n]] where f[i] is list of entries in ith spot
 # rules = [R_1,R_2,...,R_n] where R_i[num] -> bool
-# seek a permutation p in S_n so that
+# seek a bijection p: fields -> rules so that
 # R_p(i) returns true for all nums in f[i]
 
-# will seek to find a permutation in stages
+# will seek to construct the bijection in stages via a greedy algorithm
 # in each stage we will do the following process
 # for each f[i] let C_i be the set of R_j that are satisfied
 # then for i with C_i the smallest pick an assignment R_j within C_i
@@ -94,9 +94,10 @@ def decode(lst):
     # creates dict with possible rule assignments (value) for a given field (key)
     dct = {field: [rule for rule in rules if field.check(rule.set)] for field in fields} 
     
-    # the permutation we are seeking
+    # the bijection we are building
     matches = {}
     
+    # each loop determines one assignment in the bijection
     for n in range(len(fields)):
         small = min([len(x) for x in dct.values()])
         kpick = [key for key in dct if len(dct[key])==small][0]
