@@ -21,6 +21,7 @@ def search(lst):
             m = i*j*k
     return n, m
 
-print('Answer to part1:', search(read('input01'))[0] )
-print('Answer to part2:', search(read('input01'))[1] )
+searchResults = search(read('input01')) #read and search file once
+print('Answer to part1:', searchResults[0] )
+print('Answer to part2:', searchResults[1] )
                

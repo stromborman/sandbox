@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from AdventUtils import read
 """
 Solution to Advent of Code 2020: Day 03
 """
-
-
-def read(filename):
-    with open(filename) as file:
-        return [line.strip() for line in file.readlines()]
 
 def hit(x,y, debug=False):
     mnt = read('input03')

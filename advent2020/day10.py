@@ -3,10 +3,7 @@
 """
 Solution to Advent of Code 2020: Day 10
 """
-def read(filename):
-    with open(filename) as file:
-        lst = [ int(line.strip('\n')) for line in file.readlines()]
-        return sorted(lst+[0,max(lst)+3])
+from AdventUtils import read_nums_sorted as read
             
 real = read('input10')
 t1 = read('input10t1')
