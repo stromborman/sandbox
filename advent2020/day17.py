@@ -40,7 +40,6 @@ class Cube:
     
     def turn(self):
         turn_on = []
-        turn_off = []
         consider = set(self.elements.keys())
         for z in self.elements:
             consider = consider.union(nbhd(z))
@@ -49,13 +48,9 @@ class Cube:
             if self.readValue(z):
                 if  2 <= self.countNbhd(z) <= 3:
                     turn_on.append(z)
-                else:
-                    turn_off.append(z)
             else:
                 if self.countNbhd(z) == 3:
                     turn_on.append(z)
-                else:
-                    turn_off.append(z)
         
         self.elements = {z:True for z in turn_on}
 
