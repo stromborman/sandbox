@@ -15,15 +15,16 @@ real = read('input17')
 test = read('input17t')
 
 
-def nbhd(x:tuple): #-> list(tuple)
+def nbhd(x:tuple, dim=3): #-> list(tuple)
     d = [-1, 0, 1]
-    mod = [np.array((y0,y1,y2)) for y0,y1,y2 in product(d,repeat=3) if not (y0==y1==y2==0)]
+    mod = [np.array(y) for y in product(d,repeat=dim) if any([z!=0 for z in y])]
     here = np.array(x,dtype = int)
     return [tuple(z) for z in (here+mod)]
 
 class Cube:
-    def __init__(self):
+    def __init__(self, dim=3):
         self.elements = {}
+        self.dim = dim
 
     def addValue(self, tuple, value):
         self.elements[tuple] = value
@@ -36,36 +37,31 @@ class Cube:
         return value
     
     def countNbhd(self, x):
-        return sum([self.readValue(y) for y in nbhd(x)])
+        return sum([self.readValue(y) for y in nbhd(x,self.dim)])
     
     def turn(self):
         turn_on = []
-        turn_off = []
         consider = set(self.elements.keys())
         for z in self.elements:
-            consider = consider.union(nbhd(z))
+            consider = consider.union(nbhd(z,self.dim))
         
         for z in list(consider):
             if self.readValue(z):
                 if  2 <= self.countNbhd(z) <= 3:
                     turn_on.append(z)
-                else:
-                    turn_off.append(z)
             else:
                 if self.countNbhd(z) == 3:
                     turn_on.append(z)
-                else:
-                    turn_off.append(z)
         
         self.elements = {z:True for z in turn_on}
 
-def run(thing):
-    cube = Cube()
+def run(thing,dim=3):
+    cube = Cube(dim)
     l = len(thing)
     
     for i,j in product(range(l),repeat=2):
         if thing[j][i]=='#':
-            cube.addValue((i,j,0), True)
+            cube.addValue((i,j)+(0,)*(dim-2), True)
     
     for n in range(6):
        cube.turn()
@@ -74,10 +70,10 @@ def run(thing):
 
     
 print('Answer to part1:')
-run(real)
+print(run(real))
 
 
 
 
 print('Answer to part2:')
-
+print(run(real,4))
