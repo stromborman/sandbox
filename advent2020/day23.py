@@ -113,6 +113,7 @@ class BigCrab:
         num2 = self.next[num1]
         return num1*num2     
 
+    # used for testing of self.next and self.cycle()    
     def recover(self):
         lst = [0]
         num = 0
