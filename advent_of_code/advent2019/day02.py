@@ -43,7 +43,7 @@ def brute(lst, n):
         if run(lst,i,j)==19690720:
             return i, j
     
-print('Answer to part1:', brute(tape,100))
+print('Answer to part2:', brute(tape,100))
 
 
                

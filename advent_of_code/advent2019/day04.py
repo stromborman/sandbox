@@ -6,7 +6,6 @@ https://adventofcode.com/2019/day/4
 """
 
 import math
-import re
 from itertools import combinations, groupby
 
 
