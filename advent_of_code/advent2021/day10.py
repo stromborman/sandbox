@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Solution to Advent of Code 2021: Day 14
-https://adventofcode.com/2021/day/14
+Solution to Advent of Code 2021: Day 10
+https://adventofcode.com/2021/day/10
 """
 import copy
 import statistics
