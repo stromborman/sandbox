@@ -65,7 +65,7 @@ logregcv.scores_[1.0][:,3].mean()
 # 0.7626295703727779
 
 # writing the predictions
-with open('logregprob', 'w') as f:
+with open('logregprob.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(list(logregcv.predict_proba(X_test[feat])[:,1]))
     
@@ -85,6 +85,6 @@ gbc = GradientBoostingClassifier()
 gbc.fit(X[feat], y)
 
 # writing the predicitions
-with open('gradboostprob', 'w') as f:
+with open('gradboostprob.csv', 'w') as f:
     writer = csv.writer(f)
-    writer.writerow(list(logregcv.predict_proba(X_test[feat])[:,1]))
+    writer.writerow(list(gbc.predict_proba(X_test[feat])[:,1]))
