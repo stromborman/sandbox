@@ -49,7 +49,7 @@ def dow_bin(dow):
 raw.x3 = raw.x3.apply(dow_bin)
 raw = pd.get_dummies(raw,columns=['x3'], drop_first=True)
 
-
+X, X_f, y, y_f = train_test_split(df.iloc[:,2:], df.iloc[:,0], test_size=.2) 
 # Gender
 raw.x24.value_counts(dropna=False)
 raw.groupby('x24',dropna=False).mean().y
@@ -94,7 +94,7 @@ def month_bin(month):
     elif month in list(monres.index)[7:]:
         return 'H'    
 raw.x60 = raw.x60.apply(month_bin)
-raw = pd.get_dummies(raw,columns=['x60'])
+raw = pd.get_dummies(raw,columns=['x60'])X, X_f, y, y_f = train_test_split(df.iloc[:,2:], df.iloc[:,0], test_size=.2) 
 
 
 # Insurance company
