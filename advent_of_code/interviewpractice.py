@@ -149,15 +149,18 @@ class GraphM:
     def __init__(self,verts:list,oEdges:dict):
         self.verts = verts
         self.oEdges = oEdges # a dict with keys in verts and values lists of verts
-        self.iEdges = {v:set() for v in verts} # inDeg(v) = len(iEdges[v])
-        
-    def compIedges(self): 
-        for v in self.verts:
-            for w in self.oEdges[v]:
-                self.iEdges[w].add(v)
+        self.iEdges = self.inEdges(self.verts, self.oEdges)
+    
+    @staticmethod
+    def inEdges(verts, oEdges):
+        dic = {v:set() for v in verts}
+        for v in verts:
+            for w in oEdges[v]:
+                dic[w].add(v)
+        return dic
     
     def topSort(self) -> list:
-        self.compIedges()
+        # self.compIedges()
         ideg = {v:len(self.iEdges[v]) for v in self.verts}
         queue = deque([v for v in self.verts if ideg[v]==0])
         toplist = []
@@ -203,6 +206,8 @@ def test6(n=20,p=.4,pic=False):
     if pic:
         nx.draw_kamada_kawai(g, arrows=True, with_labels=True)
     print(checkTopSort(hey, test))
+    
+# test6(pic=True)
     
 
 """
@@ -287,7 +292,7 @@ def findClosest(lst:list,k:int,target:int) -> list:
 """  
 import binarytree as bt
 
-test = bt.tree(height=4)
+# test = bt.tree(height=4)
 # print(test)
 
 
@@ -299,7 +304,7 @@ def dfsList(root, lst): #Preorder
     dfsList(root.right,lst)    
     return lst
 
-dfsList(test,[])
+# dfsList(test,[])
 
 # def dfsInP(root):
 #     if root == None:
@@ -320,6 +325,11 @@ def dfsIn(root,lst): #Inorder
 
 # print(dfsIn(test,[]))
 
+
+"""
+#8.5 BFS for trees
+"""  
+
 def bfsList(root):
     lst = []
     q = deque()
@@ -334,6 +344,41 @@ def bfsList(root):
     return lst
 
 # print(bfsList(test[0]))
+
+
+# want the list to 'zigzag' across levels (instead of always left to right)
+def bfsZig(root):
+    lst = []
+    q = deque()
+    q.append(root)
+    dic = {root:0}
+    level = 0
+    cur_list = []
+    
+    while len(q) > 0:
+        work = q.popleft()
+        
+        if dic[work] > level:
+            level = dic[work]
+            if level % 2 == 1:
+                cur_list = cur_list[::-1]
+            lst = lst + cur_list
+            cur_list = []
+            
+        cur_list.append(work)
+        if work.left:
+            dic[work.left] = dic[work]+1
+            q.append(work.left)
+        if work.right:
+            dic[work.right] = dic[work]+1
+            q.append(work.right)
+    return [x.value for x in lst]
+        
+    
+# test = bt.tree(height=4)
+# print(test)
+
+# bfsZig(test)
 
 
 """
@@ -364,7 +409,7 @@ def binSearchTree(node,target,last):
 """      
 
 
-test = bt.tree(height=3, is_perfect=True)
+# test = bt.tree(height=3, is_perfect=True)
 # print(test)print(test)
 
 def pathDFS(target, source):
@@ -655,8 +700,8 @@ def fun97(arr:list) -> int:
                 return i
     print('None (this is an error)')
 
-test = [random.randint(-100,100) for i in range(20)]
-fun97(test)
+# test = [random.randint(-100,100) for i in range(20)]
+# fun97(test)
 
 def fun97b(arr:list) -> int:
     s = 0
@@ -678,10 +723,298 @@ def fun97b(arr:list) -> int:
         else:
             s = m+1
         
-test = [random.randint(-100,100) for i in range(10)]
-p = fun97b(test)
-a = max(0,p-1)
-b = min(19,p+1)
-print(test, p, test[a:b+1])
+# test = [random.randint(-100,100) for i in range(10)]
+# p = fun97b(test)
+# a = max(0,p-1)
+# b = min(19,p+1)
+# print(test, p, test[a:b+1])
+
+
+"""
+#9.8: Compute correlation 
+""" 
+
+def fun98(xs,ys):
+    n = len(xs)
+    meanx = sum(xs)/n
+    meany = sum(ys)/n
+    xs = [x - meanx for x in xs]
+    ys = [y - meany for y in ys]
     
+    stdx = math.sqrt(sum([x**2 for x in xs])/n)
+    stdy = math.sqrt(sum([y**2 for y in ys])/n)
+    
+    xs = [x/stdx for x in xs]
+    ys = [y/stdy for y in ys]
+    
+    return sum([xs[i]*ys[i] for i in range(n)])/n
+    
+    
+"""
+#9.9: Compute diameter of binary tree 
+"""     
+
+
+def fun99(node, dic):
+    dic[node] = [0,0,0]
+    for i, kid in enumerate([node.left,node.right]):
+        if kid != None:
+            fun99(kid,dic)
+            dic[node][i] = 1 + max(dic[kid][:2])
+            dic[node][2] = max(dic[node][2], dic[node][0] + dic[node][1], dic[kid][2])
+    return dic
             
+# tr = bt.tree(height=4)
+# print(tr)    
+# fun99(tr, dic={})[tr]
+            
+"""
+#9.10: "Random" array of n ints that sum to T and within a*mean of mean
+"""
+
+def fun910(n,T,a):
+    mu = T/n
+    low = -int(-mu*(1-a))
+    high = int(mu*(1+a))
+    r = high-low
+    tar_sum = T - low*n
+    
+    cur_sum = 0
+    work = [0]*n
+    while cur_sum < tar_sum:
+        i = random.randint(0, n-1)
+        work[i] = random.randint(0,r)
+        cur_sum = sum(work)
+        if cur_sum > tar_sum:
+            work[i] = work[i] - (cur_sum - tar_sum)
+    return [low+w for w in work]
+
+
+"""
+#9.11: Shortest path between given vertices in a graph
+""" 
+
+# class GraphM:
+#     def __init__(self,verts:list,oEdges:dict):
+#         self.verts = verts
+#         self.oEdges = oEdges # a dict with keys in verts and values lists of verts
+
+
+def fun911(g,s,e):
+    visited = set([s])
+    q = deque([[s]])
+    while len(q) > 0:
+        path = q.popleft()
+        print(path)
+        if path[-1] == e:
+            return path
+        for new in g.oEdges[path[-1]]:
+            if new not in visited:
+                visited.add(new)
+                q.append(path+[new])
+    print('No path from',s,'to',e)
+
+
+# g = nx.fast_gnp_random_graph(20,.15)
+# test = GraphM(list(g.nodes),{v:set(g.adj[v]) for v in list(g.nodes)})        
+# nx.draw_kamada_kawai(g,with_labels=True)
+# fun911(test, 14,10)
+
+"""
+#9.12:  For strings A and B (think len(A) >> len(B)), 
+return indices of A where an anagram of B starts
+"""   
+
+def fun912(a:str,b:str)->list:
+    def char_dict(c:str)->dict:
+        out = {}
+        for x in c:
+            if x in out.keys():
+                out[x] += 1
+            else:
+                out[x] = 1
+        return out
+    
+    b_dict = char_dict(b)
+    
+    def isAnagram(dic, start, lst):
+        for x in b_dict.keys():
+            if dic[x] != b_dict[x]:
+                return lst
+        lst += [start]
+        return lst
+    
+    index_list = []
+    n = len(b)
+    cur_dict = char_dict(a[:n])
+    isAnagram(cur_dict, 0, index_list)    
+    
+    for i in range(n,len(a)):
+        cur_dict[a[i-n]] -= 1
+        if a[i] in cur_dict.keys():
+            cur_dict[a[i]] += 1 
+        else:
+            cur_dict[a[i]] = 1
+        isAnagram(cur_dict, i-(n-1), index_list)
+        
+    return index_list
+             
+# fun912('abchbcdbac','abc')
+
+    
+"""
+#9.13: Minimal number of vertices to remove from graph so there are no edges
+"""
+
+class Graph1:
+    def __init__(self,verts:set,edges:dict):
+        self.verts = verts
+        self.edges = edges # a dict with keys in verts and values set of verts
+        self.degVert = {v:len(self.edges[v]) for v in self.verts}
+        self.numEdges = sum([self.degVert[v] for v in self.edges])/2
+    
+    def removeVertex(self, vertex):
+        edges = self.edges.pop(vertex)
+        self.numEdges -= len(edges)
+        for vert in edges:
+            self.edges[vert].remove(vertex)
+            self.degVert[vert] -= 1
+        self.verts.remove(vertex)
+        del self.degVert[vertex]
+        return self
+    
+    def maxNoEdgeSubgraph(self, return_removed = True):
+        removed = []
+        while self.numEdges > 0:
+            vert = max(self.degVert, key=self.degVert.get)
+            self.removeVertex(vert)
+            removed += [vert]
+        if return_removed == True:
+            return removed
+        else:
+            return self.verts
+
+
+
+# g = nx.fast_gnp_random_graph(20,.1)
+# test = Graph1(set(g.nodes),{v:set(g.adj[v]) for v in list(g.nodes)})    
+# nx.draw_kamada_kawai(g,with_labels=True)
+# test.maxNoEdgeSubgraph()
+
+
+"""
+#9.13.5: Previous problem (vertices are intervals and edges when intervals
+intersect) without using language of graph theory
+"""
+
+def fun913(lst): #lst = [[1,4], [3,5],[-1,10]] 
+    lst = sorted(lst)
+    vert = {i:item for i,item in enumerate(lst)}
+    
+    comp_inter = vert[0]
+    throwout = []
+    keep = []
+    
+    for inter in lst[1:]:
+        if inter[0] < comp_inter[1]: # they intersect need to throw one out
+            if inter[1] <= comp_inter[1]: # inter subset comp_inter, throw out comp_inter and inter new comp
+                throwout += [comp_inter]    
+                comp_inter = inter
+            else:
+                throwout += [inter]
+        else: # comp_inter[1] <= inter[0] they are disjoint, keep comp_inter, start using inter to compare 
+            keep += [comp_inter]
+            comp_inter = inter
+    keep += [comp_inter]
+    return throwout, keep
+
+
+# test = [sorted([random.randint(-100,100), random.randint(-100,100)]) for i in range(100)]
+# fun913(test)[1]
+
+
+"""
+#9.14: Parition a set of strings by the anagram equivalence relation
+"""
+
+class AnagramAndStrings:
+    def __init__(self,anagram,strings):
+        self.anagram = anagram
+        self.strings = strings
+
+class MyString:
+    def __init__(self, string):
+        self.string = string
+        self.length = len(string)
+        self.dic = self.make_dic(string)
+        
+    @staticmethod
+    def make_dic(string):
+        out = {}
+        for x in string:
+            if x in out.keys():
+                out[x] += 1
+            else:
+                out[x] = 1
+        return out
+
+def fun914(stringList):
+    build = {}
+    
+    for string in stringList:
+        print(string)
+        mystring = MyString(string)
+        
+        if mystring.length not in build.keys():
+            build[mystring.length] = [AnagramAndStrings(mystring.dic, [mystring.string])]
+        else:
+            flag = True
+            for item in build[mystring.length]:
+                if item.anagram == mystring.dic:
+                    item.strings += [mystring.string]
+                    flag = False
+                    break
+            if flag:
+                build[mystring.length] += [AnagramAndStrings(mystring.dic, [mystring.string])]
+    
+    return [anagram.strings for item in hey.values() for anagram in item]
+             
+# print(fun914(['abc','abasg','cba','qvqwgf','ewr']))
+
+"""
+#9.15: number of connected components from an adjacenty matrix
+Pick vertex, do dfs/bfs till exhaustion, then repeat.
+"""
+from scipy import sparse
+
+def fun915(sp_mat):
+    def dfs_A(sp_mat,start):
+        visited = {start}
+        stack = deque([start])
+        while len(stack) > 0:
+            here = stack.pop()
+            for there in sparse.find(mat[here])[1]:
+                if there not in visited:
+                    visited.add(there)
+                    stack.append(there)
+        return visited
+    
+    n = sp_mat.shape[0]
+    verts = set(range(n))
+    components = []
+    
+    while len(verts) > 0:
+        start = verts.pop()
+        component = dfs_A(sp_mat, start)
+        components += [component]
+        verts = verts - component
+        
+    return components
+        
+g = nx.fast_gnp_random_graph(20,.05)
+mat = nx.adjacency_matrix(g)
+
+fun915(mat)
+
+
+
