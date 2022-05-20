@@ -993,7 +993,7 @@ def fun915(sp_mat):
         stack = deque([start])
         while len(stack) > 0:
             here = stack.pop()
-            for there in sparse.find(mat[here])[1]:
+            for there in sparse.find(sp_mat[here])[1]:
                 if there not in visited:
                     visited.add(there)
                     stack.append(there)
@@ -1011,10 +1011,54 @@ def fun915(sp_mat):
         
     return components
         
-g = nx.fast_gnp_random_graph(20,.05)
-mat = nx.adjacency_matrix(g)
+# g = nx.fast_gnp_random_graph(20,.05)
+# mat = nx.adjacency_matrix(g)
+# fun915(mat)
 
-fun915(mat)
 
+"""
+#9.16: Remove kth item from end of linked list
+"""
+
+class Linked:
+    def __init__(self,data,nex=None):
+        self.data = data
+        self.nex = nex
+    
+    def toList(self):
+        out = []
+        cur = self
+        while cur != None:
+            out.append(cur.data)
+            cur = cur.nex
+        return out
+        
+def toLinked(lst)->Linked:
+    head = Linked(lst[0])
+    cur = head
+    for i in range(1,len(lst)):
+        cur.nex = Linked(lst[i])
+        cur = cur.nex
+    return head
+        
+
+def fun916(head,k):
+    lst = head.toList()
+    if k == 1:
+        lst = lst[:-1]
+    else:
+        lst = lst[:-k]+lst[-k+1:]
+    return toLinked(lst)
+
+# hey = [4,5,2,1,5,6]
+# heyLink = toLinked(hey)
+# heyLinkList = heyLink.toList()       
+# fun916(heyLink,1).toList()    
+    
+    
+    
+"""
+#9.17: Estimate pi via monte carlo
+"""       
 
 
