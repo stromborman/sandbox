@@ -624,7 +624,7 @@ def fun94(arr,k):
     return sorted(lst)[k-w-1]
 
 """
-#9.5: for arr, return max(0, sum(arr[i:j])) over all j 
+#9.5: for arr, return max(0, sum(arr[i:j])) over all i,j 
 """ 
 
 def fun95(arr):
@@ -1060,5 +1060,125 @@ def fun916(head,k):
 """
 #9.17: Estimate pi via monte carlo
 """       
+
+def calcPi(n=1000):
+    count = 0
+    for i in range(n):
+        if random.random()**2 + random.random()**2 < 1:
+            count += 1
+    return 4*count/n
+
+
+"""
+#9.18: Parenthesis parser (remove minimal number of them to make string valid)
+"""  
+
+def fun918(string):
+    def helper(string,wall=-1):
+        count = 0
+        newstring = ''
+        if wall == 1:
+            string = string[::-1]
+        for char in string:
+            if char == '(':
+                count += 1
+            elif char == ')':
+                count -= 1
+            if count == wall:
+                count = 0
+            else:
+                newstring += char
+        if wall == 1:
+            newstring = newstring[::-1]
+        return newstring
+    
+    return helper(helper(string),1)
+
+
+def fun918_stack(string):
+    stack = deque()
+    result = ['']*len(string)
+    
+    for i, char in enumerate(string):
+        if char == '(':
+            stack.append(i)
+        elif char == ')':
+            if len(stack) > 0:
+                result[stack.pop()] = '('
+                result[i] = ')'
+        else:
+            result[i] = char
+    
+    return ''.join(result)
+                
+            
+# fun918_stack('1wqdf))((ab)(((SD)(VFC))')
+        
+"""
+#9.19: Generate S_n (aka give all permutation of a list of distinct ints)
+"""
+
+def fun919(n=3):
+    def helper(lst):
+        newlst = []
+        n = len(lst[0])
+        for i in range(n+1):
+            for perm in lst:
+                newperm = perm[:i] + [n] + perm[i:]
+                newlst.append(newperm)
+        return newlst
+    out = [[0]]
+    for i in range(n-1):
+        out = helper(out)
+    return out
+
+"""
+#9.20: Sample from [0,...,k-1] with weights w_0,...,w_k-1
+"""    
+
+def fun920(lst):
+    cumsum = np.cumsum(lst)
+    ran = random.randint(1, cumsum[-1])    
+    return ([i for i in range(len(lst)) if ran <= cumsum[i]])
+
+"""
+#9.21: For two arrays of integers return the longest shared subarray
+"""
+
+def fun921(arr1,arr2):
+    n, m = len(arr1), len(arr2)
+    
+    mat = np.zeros((n,m),dtype = int) # mat[i]
+    for i, x in enumerate(arr1):
+        for j, y in enumerate(arr2):
+            if x == y:
+                mat[i,j] = 1
+    
+    best = 0
+    loc = [0,0]
+    for off in range(-n+1,m):
+        cur = 0
+        for i, num in enumerate(mat.diagonal(offset=off)):
+            if num == 1:
+                cur += 1
+                if cur > best:
+                    loc = [off,i-cur+1]
+                    best = cur
+            if num == 0:
+                cur = 0
+    
+    if loc[0] <= 0:
+        subarr = arr2[loc[1]:loc[1]+best]
+    if loc[0] >= 0:
+        subarr = arr1[loc[1]:loc[1]+best]
+    return best, subarr
+    
+    
+
+# a = [random.randint(0,9) for i in range(random.randint(20,500))]
+# b = [random.randint(0,9) for i in range(random.randint(20,500))]
+# fun921(a,b)
+
+
 
 
