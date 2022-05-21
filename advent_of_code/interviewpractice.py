@@ -1139,7 +1139,7 @@ def fun919(n=3):
 def fun920(lst):
     cumsum = np.cumsum(lst)
     ran = random.randint(1, cumsum[-1])    
-    return ([i for i in range(len(lst)) if ran <= cumsum[i]])
+    return min([i for i in range(len(lst)) if ran <= cumsum[i]])
 
 """
 #9.21: For two arrays of integers return the longest shared subarray
@@ -1180,5 +1180,183 @@ def fun921(arr1,arr2):
 # fun921(a,b)
 
 
+"""
+#9.22: From list of nonnegative integers return largest sum of increasing sublist
+"""
 
+def fun922(arr):
+    best = arr[0]
+    best_ind = [0,0]
+    cur = arr[0]
+    cur_ind = [0,0]
+    for i in range(1,len(arr)):
+        if arr[i] >= arr[i-1]:
+            cur_ind[1] = i
+            cur += arr[i]
+            if cur > best:
+                best = cur
+                best_ind = cur_ind
+        else:
+            cur_ind = [i,i]
+            cur = arr[i]
+    return best, arr[best_ind[0]:best_ind[1]+1], arr
+
+# test = [random.randint(0, 20) for i in range(20)]
+# fun922(test)
+
+"""
+#9.22a: From list of nonnegative integers return largest sum of increasing sublist (indices just need to be ordered, not sequential)
+Issue:
+    5,3,100 best is 5+100=105
+    5,3,100,10,11,95 best is 5+10+11+95=121
+    If we just store best sum from previous problems, we would not see this 121 sum, since 5+10+11=26
+    is not the best sum in [5,3,100,10,11].  But 26 is the best sum that must use that 11.
+"""
+
+def fun922a(arr):
+    ht = [arr[i] for i in range(len(arr))] #ht[i] stores best sum that ends with arr[i] 
+    best = arr[0]
+    for i in range(1,len(arr)):
+        ai = arr[i]
+        for j in range(i):
+            if ai >= arr[j]: #this condition forces us to only  
+                if ht[i] < ht[j] + ai:
+                    ht[i] = ht[j] + ai
+                    if ht[i] > best:
+                        best = ht[i]
+    return best, ht
+            
+# hey = [5,3,100,10,11,95] + list(range(4,20))
+# fun922a(hey)
+
+
+"""
+#9.23: For positive integer n, return k the fewest number of perfect squares needed to sum to n
+Note: If n = n1 + n2, then f(n) <= f(n1) + f(n2) with equality for best split, so just minimize over n1+n2 = n
+"""
+
+def fun923(n):
+    best = {1:1,2:2,3:3,4:1,5:2} # dict that stores solutions to subproblems
+    for num in range(6,n+1):
+        x = np.sqrt(num)
+        if int(x) == x:
+            best[num] = int(x)
+        else:
+            best[num] = min([best[i]+best[num-i] for i in range(1,int(num/2))])
+    return best[n]            
+
+"""
+#9.24: Impliment n choose k and actual lists.  Can use f(n,k) = f(n-1,k-1) + f(n-1,k)
+"""
+
+def ch(n,k):
+    if n<=0 or k<=0 or n < k:
+        return []
+    if n == k:
+        return [list(range(1,n+1))]
+    if k==1:
+        return [[i] for i in range(1,n+1)]
+    else:
+        return ch(n-1,k) + [x+[n] for x in ch(n-1,k-1)]
+    
+    
+"""
+#9.25: For random string of (()(()))(, return longest well-formed substring
+""" 
+
+# If work_sum > 0 and the end of this function, the last string
+# in wfss will have too many '('.  Can get around this by throwing
+# it into this function again with the order reversed and swapping '(' with ')'  
+# Or just run the function twice with pstr and its mirror with run in O('2'n)
+
+def parPar(pstr):
+    val = {'(':1,')':-1}
+    wfss = []
+    work_sum = 0
+    work_str = ''
+    for p in pstr:
+        # print('working on',work_str,'new char',p)
+        work_sum += val[p]
+        if work_sum == -1:
+            if len(work_str) > 0:
+                wfss.append(work_str)
+            work_str = ''
+            work_sum = 0
+        else:
+            work_str += p
+    if len(work_str) > 0:
+        wfss.append(work_str)
+    return wfss
+
+# def mirror(string):
+#     out = ''
+#     swap = {'(':')',')':'('}
+#     for p in string[::-1]:
+#         out += swap[p]
+#     return out
+
+# This solution only needs a single pass so it is O(n)    
+def stackPar(pstr):
+    wfss = []
+    work = []
+    stack = deque()
+    start = 0
+    for i,p in enumerate(pstr):
+        if p == '(':
+            work += [''] 
+            stack.append(i-start)
+        elif p == ')':
+            if stack:
+                work[stack.pop()] = '('
+                work+= [')']
+            else:
+                if len(work) > 0:
+                    wfss.append(''.join(work))
+                start = i + 1
+                work = []
+    final = ''
+    for c in work:
+        if c == '':
+            if len(final) > 0:
+                wfss.append(final)
+                final=''
+        else:
+            final = final + c
+    if len(final) > 0: wfss.append(final)     
+    return wfss
+                
+
+def ranParStr(n=20):
+    out = ''
+    for i in range(n):
+        x = random.randint(0, 1)
+        if x == 0:
+            out += '('
+        else:
+            out += ')'
+    return out
+
+parPar(ranParStr())
+
+test = ranParStr(30)
+print(test, stackPar(test))
+
+
+def justTheLen(pstr):
+    stack = deque([-1]) # stack[-1] is either the most recent unmatched '(' or the last illegal ')'
+    best = 0
+    string = ''
+    for i,p in enumerate(pstr):
+        if p == '(':
+            stack.append(i)
+        else:
+            stack.pop()  # this append/pop is the standard +/- 1 
+            if len(stack) == 0: # since len(stack)=1 at start, this means we hit an illegal ')'
+                stack.append(i) 
+            else: 
+                if i-stack[-1] > best:
+                    best = i-stack[-1]
+                    string = pstr[stack[-1]+1: i+1]
+    return best, string
+    
 
