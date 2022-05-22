@@ -1336,13 +1336,13 @@ def ranParStr(n=20):
             out += ')'
     return out
 
-parPar(ranParStr())
+# parPar(ranParStr())
 
-test = ranParStr(30)
-print(test, stackPar(test))
+# test = ranParStr(30)
+# print(test, stackPar(test))
 
 
-def justTheLen(pstr):
+def cleanPar(pstr):
     stack = deque([-1]) # stack[-1] is either the most recent unmatched '(' or the last illegal ')'
     best = 0
     string = ''
@@ -1358,5 +1358,207 @@ def justTheLen(pstr):
                     best = i-stack[-1]
                     string = pstr[stack[-1]+1: i+1]
     return best, string
-    
 
+"""
+#9.26: For matrix with positive integers find longest path of increasing numbers (diagonal counts as neighbor).
+This is the problem: Find the diameter of a directed acyclic graph 
+"""
+
+def fun926(gr):
+    best = 0
+    q = deque([[0,v] for v in gr.verts])
+    while q:
+        n, v = q.popleft()
+        if not gr.oEdges[v]:
+            if n > best:
+                best = n
+        else:
+            for w in gr.oEdges[v]:
+                q.append([n+1,w])
+    return best
+# Run time is terrible here.  Can be improved by computing a topological sort first
+
+
+
+# This runs is O(n) time
+def helpTopSort(gr):
+    inDeg = {v:len(gr.iEdges[v]) for v in gr.verts}
+    qu = deque([v for v in gr.verts if inDeg[v]==0])
+    toplist = []
+    while qu:
+        v = qu.popleft()
+        toplist.append(v)
+        for w in gr.oEdges[v]:
+            inDeg[w] -= 1
+            if inDeg[w] == 0:
+                qu.append(w)
+    return toplist
+        
+# This runs in O(n^2) time
+def fun926wTop(gr):
+    top = helpTopSort(gr) #list of edges is a topological order
+    n = len(top)
+    best = [0]*n # this stores the length of the longest path that end at this vertex
+    for i in range(n):
+        for j in range(i):
+            if top[i] in gr.oEdges[top[j]]:
+                best[i] = max(best[i], best[j]+1)
+    return max(best)
+        
+    
+def test926(n=20,p=.4,pic=False):
+    g = generate_random_dag(n, p)
+    actual = nx.dag_longest_path_length(g)
+    test = GraphM(list(g.nodes),{v:set(g.adj[v]) for v in list(g.nodes)})
+    # testans = fun926(test)
+    testans = fun926wTop(test)
+    if pic:
+        nx.draw_kamada_kawai(g, arrows=True, with_labels=True)
+    print(actual, '=', testans, 'is', actual==testans)
+
+
+def fun926M(mat):
+    def nbhd(loc,n,m):
+        alldirec = [np.array([ud,rl]) for ud in [-1,0,1] for rl in [-1,0,1]]
+        allpos = [np.array(loc) + x for x in alldirec] 
+        return [tuple(x) for x in allpos if (x[0] in range(n) and x[1] in range(m))]
+    
+    n,m = mat.shape
+    vert = [(i,j) for i in range(n) for j in range(m)]
+    edgeDic = {v:set() for v in vert}
+    for v in vert:
+        for w in nbhd(v,n,m):
+            if mat[v] < mat[w]:
+                edgeDic[v].add(w)
+    
+    return GraphM(vert,edgeDic)
+
+# fun926M(hey).verts
+# fun926M(hey).oEdges
+
+"""
+#9.27: For given n, find the number of ways to write n as a sum of consecutive positive integers
+Doing it in O(n)
+"""
+
+def fun927(n):
+    def cSum(s,k):
+        highsum = (s+1+k)*(s+k)/2 # sum of 1+2+3+...+(s+k)
+        lowsum = (s+1)*s/2 # sum of 1+2+3+..+s
+        return highsum-lowsum #sum of (s+1)+...+(s+k)
+    
+    def bound(s,m): # if cSum(s,k) = m, then k is within [0,3] of bound(s,n)
+        return max(0,int(math.sqrt(2*n+s**2))-s - 2)
+
+    out = []
+    for s in range(n+1):
+        b = bound(s,n)
+        for k in range(b,b+4):
+            if cSum(s,k) == n:
+                out.append([s,k])
+    return out
+
+"""
+#9.28: Class based solution to having a live median computation from stream of numbers
+"""
+
+def med(heapMax, heapMin):
+    if len(heapMax) == 0 and len(heapMin)== 0:
+        return 0
+    if len(heapMax) > len(heapMin):
+        out = -heapMax[0]
+    elif len(heapMin) > len(heapMax):
+        out = heapMin[0]
+    else:
+        out = (-heapMax[0]+heapMin[0])/2
+    return out
+        
+
+class NumStream:
+    def __init__(self, stream, maxH=[],minH = []):
+        self.stream = deque(stream)
+        self.maxH = maxH
+        self.minH = minH
+        self.median = med(self.maxH, self.minH)
+    
+    def update(self):
+        
+        new = self.stream.popleft()
+        # print(new)
+        if new >= self.median:
+            heapq.heappush(self.minH, new)
+        else:
+            heapq.heappush(self.maxH, -new)
+        
+        n = len(self.maxH) - len(self.minH)
+        if n == -2:
+            heapq.heappush(self.maxH, -heapq.heappop(self.minH))
+        elif n == 2:
+            heapq.heappush(self.minH, -heapq.heappop(self.maxH))
+        
+        self = NumStream(self.stream,self.maxH,self.minH)
+        return self.median
+    
+    def medList(self):
+        out = []
+        while self.stream:
+            # print(self.stream, self.maxH, self.minH)
+            newmed = self.update()
+            
+            out.append(newmed)
+        return out
+    
+    
+# test = [random.randint(-100, 100) for i in range(20)]
+# hey = NumStream(test)
+# medians = hey.medList()
+# realmed = [np.median(test[0:i]) for i in range(1,21)]         
+        
+
+"""
+#9.30: Do gradient descent
+Have points p_1,...,p_n in R^2
+find point x in R^2 that minimizes sum of distances to the points
+"""
+
+def dist(x,y):
+    return np.sqrt((x[0]-y[0])**2 + (x[1]-y[1])**2) 
+
+def gradD(lst):
+    def part0(x):
+        return sum([(x[0]-p[0])/dist(x,p) for p in lst])
+    def part1(x):
+        return sum([(x[1]-p[1])/dist(x,p) for p in lst])
+    
+    rate = 1
+    decay = 1e-3
+    stopRate = 1e-7
+    damp = 0
+    
+    x_w = [0,0]
+    d0 = 0
+    d1 = 0
+    
+    while rate > stopRate:
+        d0 = part0(x_w) + damp*d0
+        d1 = part1(x_w) + damp*d1
+        
+        x_w[0] = x_w[0] - rate*d0
+        x_w[1] = x_w[1] - rate*d1
+        
+        rate = rate*(1-decay)
+        
+    return x_w
+    
+test = [[random.randint(-10, 10), random.randint(-10, 10)] for i in range(10)]    
+
+gradD(test)    
+
+
+
+
+
+
+        
+    
+    
