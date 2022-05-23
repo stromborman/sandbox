@@ -65,7 +65,7 @@ net = Net()
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(net.parameters(), lr=3e-4)
 
-    
+net.train()    
     
 for i, data in enumerate(trainloader):
     inputs, labels = data
