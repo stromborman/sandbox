@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-
+Simple NN
 """
 
 import torch
@@ -19,10 +19,10 @@ relu = nn.ReLU()
 transform = transforms.Compose([transforms.ToTensor(),
 								transforms.Normalize((.1307), ((.3081)))])
 
-trainset = torchvision.datasets.MNIST('mnist', train=True, \
-                                      download=True, transform=transform)
-testset = torchvision.datasets.MNIST('mnist', train = False, \
-                               download=True, transform=transform)
+trainset = torchvision.datasets.MNIST('~/anaconda3/share/mnist', train=True, \
+                                      download=False, transform=transform)
+testset = torchvision.datasets.MNIST('~/anaconda3/share/mnist', train = False, \
+                               download=False, transform=transform)
     
 # Prepare training loader and testing loader
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=32,
@@ -74,7 +74,7 @@ model.eval()
 total = 0
 correct = 0
 
-for i, data in enumerate(testloader, 0):
+for i, data in enumerate(testloader):
     inputs, labels = data
     
     # Put each image into a vector

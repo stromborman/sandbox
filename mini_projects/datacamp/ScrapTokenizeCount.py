@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-
+Scraps give url for text and returns the 10 most common words
+that are not 'stopwords'
 """
 
 import requests
@@ -12,7 +13,8 @@ from collections import Counter
 # nltk.download('stopwords')
 
 
-r = requests.get('https://www.gutenberg.org/files/16/16-h/16-h.htm')
+url = 'https://www.gutenberg.org/files/16/16-h/16-h.htm'
+r = requests.get(url)
 r.encoding = 'utf-8'
 html = r.text
 
