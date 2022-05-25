@@ -4,6 +4,7 @@
 import numpy as np
 import random
 import matplotlib.pyplot as plt
+import binarytree as bt
 
 
 """
@@ -290,7 +291,6 @@ def findClosest(lst:list,k:int,target:int) -> list:
 """
 #8 Search of binary tree for node
 """  
-import binarytree as bt
 
 # test = bt.tree(height=4)
 # print(test)
@@ -588,13 +588,13 @@ def sumDFS_I(node,target,end='leaf'):
     return flag
 
 
-test = bt.tree(height=3, is_perfect=True)
-print(test)
-root = bt.Node(1)   
-root.left = bt.Node(2)
+# test = bt.tree(height=3, is_perfect=True)
+# print(test)
+# root = bt.Node(1)   
+# root.left = bt.Node(2)
 
-sumDFS_I(root, 1, 'ianyi')
-sumDFS_I(test,200) 
+# sumDFS_I(root, 1, 'ianyi')
+# sumDFS_I(test,200) 
 
 
 # def preorderDFS_R(node,lst):
@@ -619,3 +619,71 @@ sumDFS_I(test,200)
 #     return lst
 
 # print(preorderDFS_I(test))
+
+
+"""
+Same problem with recursion
+"""
+
+def sumDFS_R(node,target,end='leaf'):
+    flag = False
+    def helpR(work, cur_tar, end='leaf'):
+        nonlocal flag
+        if work:
+            if end == 'any':
+                if cur_tar == work.value:
+                    flag = True 
+        if work == None:
+            if cur_tar == 0:
+                flag = True
+        else:
+            helpR(work.left, cur_tar-work.value, end)
+            helpR(work.right, cur_tar-work.value, end)
+    helpR(node,target,end)
+    return flag
+
+
+"""
+#14: Impliment naive KMeans
+"""
+
+
+def naiveKM(data,num_clusters):
+    
+    def assignClusters(centers):
+        clusters = {i:[] for i in range(num_clusters)}
+        for j, vec in enumerate(data):
+            best = np.inf
+            assign = 0            
+            for i in range(num_clusters):
+                if np.linalg.norm(vec-centers[i]) < best:
+                    best = np.linalg.norm(vec-centers[i]) 
+                    assign = i
+            clusters[assign] += [j]
+        return clusters
+    
+    def computeCenters(clusters):
+        centers = {}
+        for i in range(num_clusters):
+            centers[i] = np.mean([data[j] for j in clusters[i]],axis=0)
+        return centers
+    
+    flag = True
+    centers = {i:data[j] for i,j in enumerate(random.sample(range(len(data)), num_clusters))}
+    print(centers)
+    
+    while flag:
+            final_centers = computeCenters(assignClusters(centers))
+            if sum([np.linalg.norm(final_centers[i] - centers[i]) for i in range(num_clusters)]) < 1e-7:
+                flag = False
+            else:
+                centers = final_centers
+    
+    return final_centers, assignClusters(final_centers)
+        
+       
+# test = [np.array([-2,-2]) + arr for arr in np.random.rand(10,2)] +\
+#         [np.array([5,0]) + arr for arr in np.random.rand(20,2)] +\
+#         [np.array([0,3]) + arr for arr in np.random.rand(30,2)]
+
+# naiveKM(test, 3)
