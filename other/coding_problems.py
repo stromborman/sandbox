@@ -687,3 +687,24 @@ def naiveKM(data,num_clusters):
 #         [np.array([0,3]) + arr for arr in np.random.rand(30,2)]
 
 # naiveKM(test, 3)
+
+
+"""
+#15: Longest Palindrome
+"""
+
+def palFindNaive(s:str)->str:
+    best = ''
+    n = len(s)
+    for i in range(n):
+        for j in range(i+len(best),n+1):
+            sub = s[i:j]
+            if sub==sub[::-1]:
+                best = sub
+    return best
+            
+    
+test = ['abba', 'abbca','abccggge','a']
+for string in test:
+    print(palFindNaive(string))    
+    
