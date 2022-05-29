@@ -15,9 +15,13 @@ Z^2 evolves in the follow manner:
         a 9-bit string (.=0, #=1) and use the 512-length string to look up
         a character f(i,j) in {.,#}
     2) With f(i,j) computed for all i,j.  The new image is given by f.
+
+WARNING: In the test case: an array of 9 '.' gets assigned to '.', while in
+the real case it gets assigned to '#'.  Then in the real case an array of 9 '#'
+gets assigned to '.'  So in the real case the terms at infinity are switching between
+'.' for even num of updates and '#' for odd number of updates.
 """
 
-from collections import deque
 import numpy as np
 
 class Image:
@@ -28,8 +32,7 @@ class Image:
         self.updates = updates
         self.crop = {pt for pt in self.points if (-updates <= pt[0] < self.size+updates)
                      and (-updates <= pt[1] < self.size+updates)}
-        
-        
+               
     def __repr__(self):
         minx = 0 - self.updates - 1
         maxx = self.size + self.updates + 1
@@ -46,8 +49,6 @@ class Image:
                     string += '.'
         return string[1:]
         
-        
-        
     def lookup(self, point):
         nbhd = list(map(tuple,np.array(point) + 
                         [np.array([-1,-1]), np.array([0,-1]), np.array([1,-1]),
@@ -59,8 +60,8 @@ class Image:
                 bin_string+='1'
             else:
                 bin_string+='0'
-        return self.evo_rule[int(bin_string,2)]#, bin_string, int(bin_string,2)        
-        
+        return self.evo_rule[int(bin_string,2)]
+    
     def update(self):
         minx = 0 - self.updates - 1
         maxx = self.size + self.updates + 2
@@ -72,6 +73,7 @@ class Image:
         new_image = Image(newpoints,self.evo_rule,self.size,self.updates+1)
         return new_image
         
+
 def make_image(filename):
     with open(filename) as file:
         rule, rawpoints = file.read().split('\n\n')
@@ -86,14 +88,6 @@ real = make_image('input20')
 
 
 """
-WARNING: In the test case: an array of 9 '.' gets assigned to '.', while in
-the real case it gets assigned to '#'.  Then in the real case an array of 9 '#'
-gets assigned to '.'  So in the real case the terms at infinity are switching between
-'.' for even num of updates and '#' for odd number of updates. 
-"""
-
-
-"""
 For part 1: We want to know how many # there are after updating twice.
 """
 
@@ -103,8 +97,6 @@ print('Answer to part1:', len(real.update().update().crop)) # 5437
 """
 For part 2: We want to know how many # there are after updating 50 times.
 """
-
-
 
 real50 = real
 for i in range(50):
