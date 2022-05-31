@@ -11,9 +11,14 @@ Also in Z^3 are a collection of scanners which report back to us
 the coordinates of any beacons within 1000 (L^inf norm) of the beacon.
 
 The issue is that the reports are in terms of (unknown) local coordinates 
-centered at the beacon whose location in Z^3 is unknown.  E.g. if a scanner 
+centered at the scanner whose location in Z^3 is unknown.  E.g. if a scanner 
 is at pt_s (unknown) in Z^3, then for some g_s (unknown) in SO(Z,3)
 every beacon pt_b within range will be reported at the location g_s(pt_b - pt_s)
+
+These local coordinates can be glued together since we are assured that if
+any two scanners overlap on 12 beacons then they can be 'glued'.
+We used having 3 beacons in each scanner such that the set of distances
+intersected in a size >= 12 to match this criterion.
 """
 import scipy.spatial.transform
 import numpy as np
