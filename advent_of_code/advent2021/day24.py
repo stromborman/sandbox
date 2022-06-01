@@ -26,14 +26,16 @@ def get_input(filename):
                 if re.match(r'[^wxyz]',command[2]):
                     command[2] = int(command[2])
     return commands
+    
+"""
+A command in the list of commands is either ['inp','w'] (an input call)
+or an operation ['opr', a, b] where a is a variable string and likewise for b (or just an integer)
+"""
 
 class ALU:        
     def __init__(self,instructions=[]):
         self.instructions = instructions
         self.vars = [0,0,0,0]
-        
-    def __repr__(self):
-        return f"w={self.vars[0]}; x={self.vars[1]}; y={self.vars[2]}; z={self.vars[3]}"
         
     def var_id(self, char): #'w'-> 0, ..'z'->3
         return ord(char) - ord('w')
@@ -49,27 +51,30 @@ class ALU:
             return a + b
         if opr == 'mul':
             return a*b
-        if opr == 'div': # dont let b = 0 
+        if opr == 'div':  
             return int(a/b)
-        if opr == 'mod': # dont let a<0 or b<=0
+        if opr == 'mod': 
             return a % b
         if opr == 'eql':
             return 1 if a == b else 0 
             
-    def run(self,input_num,reset=True):
+    def run(self,input_num:int,reset=True): # Output is the value of the 'z' variable, input passes if output is 0
         if reset:
             self.vars = [0,0,0,0]
+        # we turn the input_num into a list of digits so we can feed the digits one by one
         inputs= list(str(input_num)) 
         for command in self.instructions:
             write_var = self.var_id(command[1])
+            # only commands of length 2 are input calls
             if len(command) == 2:
+            	# we pop the left most digit of the input_num and feed it to the input call
                 self.vars[write_var] = int(inputs.pop(0))
             else:
                 opr = command[0]
                 a = self.var_val(command[1])
                 b = self.var_val(command[2])
                 self.vars[write_var] = self.operate(opr,a,b)
-        return self.vars
+        return self.vars[3]
     
     # This method was for experimentation and understanding the different 'chunks' of the program
     def one_input(self,start,z,inp):
