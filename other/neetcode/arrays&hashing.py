@@ -121,25 +121,38 @@ Longest Consecutive Sequence:
 """
 
 def longestConsecutive(nums: List[int]) -> int: 
+    # Solution is done by keeping track of the 'intervals' the nums
+    # are forming/filling as one goes down the list
+
+    # These two dictionaries track the interval end points
+    # Use two dictionaries so both left and right end points live in hash table
+       
     matchLR = {} #keys are left endpoints, values are right end points
     matchRL = {} #keys are right endpoints, values are left end points
     seen = set()
     for num in nums:
         if num not in seen:
             seen.add(num)
-            if num in matchLR.keys() and num in matchRL.keys():
+            
+            # num caused two intervals to merge
+            if num in matchLR.keys() and num in matchRL.keys(): 
                 left = matchRL.pop(num)
                 right = matchLR.pop(num)
+            
+            # num extends one interval either left or right 
             elif num in matchLR.keys():
                 left = num - 1
                 right = matchLR.pop(num)
             elif num in matchRL.keys():
                 left = matchRL.pop(num)
                 right = num+1
+            
+            # num starts a new interval
             else:
                 left = num - 1
                 right = num + 1
+            
             matchLR.update({left:right})
             matchRL.update({right:left})
          
-    return max([key-value-1 for key,value in matchRL.items()]+[0])  
+    return max([key-value-1 for key,value in matchRL.items()]+[0])  #[0] for case nums = []
