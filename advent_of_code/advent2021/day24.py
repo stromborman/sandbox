@@ -71,6 +71,7 @@ class ALU:
                 self.vars[write_var] = self.operate(opr,a,b)
         return self.vars
     
+    # This method was for experimentation and understanding the different 'chunks' of the program
     def one_input(self,start,z,inp):
         self.vars = [inp,0,0,z]
         for command in self.instructions[start+1:]:
