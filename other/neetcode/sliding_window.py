@@ -100,12 +100,39 @@ def characterReplacement(s: str, k: int) -> int:
     
     return best
 
+
+"""
+Permutation in String:
+    Given two strings s1 and s2, return true if 
+    one of s1's permutations is the substring of s2
+"""
+
+def checkInclusion(s1: str, s2: str) -> bool:
+    window = len(s1)
+    if window > len(s2):
+        return False
     
+    s1_dict = defaultdict(int)
+    for c in s1:
+        s1_dict[c]+=1
     
+    window_dict = defaultdict(int)
+    for i in range(window):
+        window_dict[s2[i]]+=1
     
+    if s1_dict == window_dict:
+        return True
     
+    for i,c in enumerate(s2):
+        if i >= window:
+            if window_dict[s2[i-window]] == 1:
+                del window_dict[s2[i-window]]
+            else:
+                window_dict[s2[i-window]] -= 1
+            window_dict[c] += 1
+            print(window_dict)
+            if window_dict == s1_dict:
+                return True
     
-    
-    
-    
-    
+    return False
+        
