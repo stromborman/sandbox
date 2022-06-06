@@ -158,32 +158,24 @@ Car Fleet:
     it will still be considered as one car fleet.
     
     Return the number of car fleets that will arrive at the destination.
+    
+    Key observation: Even with the potential slowdowns due to 
+    intermediate merges, if c1 < c2 < c3 in positions, c2 catches
+    c3 (based on inital speeds), and c1 catches c3 based on inital speeds,
+    then c1 still catches c3 even if c2 slows c3 down.
 """
 
+
 def carFleet(target: int, position: List[int], speed: List[int]) -> int:
-    pv = sorted(list(zip(position,speed)), key= lambda x:x[0])+[(target,0)]
-    n = len(position)
-    time_deltas = [0]*n
-    for i in range(n):
-        p1, v1 = pv[i]
-        p2, v2 = pv[i+1]
-        if v1 > v2:
-            time_deltas[i] = (p2-p1)/(v1-v2)
-
-    def helper(lst):
-        best = lst[0]
-        locs = [0]
-        for i, num in enumerate(lst):
-            if num < best:
-                best = num
-                locs = [i]
-            elif num == best:
-                locs.append(i)
-        return [best,locs]
+    pv = sorted(list(zip(position,speed)), key= lambda x:-x[0])
     
-    # run for best time and merge the cars that meet, update the speeds of
-    # the faster car
+    stack = []
+    
+    for p,v in pv: #going through the pv list starting at cars closest to target
+        target_time = (target-p)/v # time the car reaches the target at initial speed
         
-
-
-    
+        # Not adding to the stack means the car merges before the end
+        if not stack or target_time > stack[-1]: 
+            stack.append(target_time)
+                
+    return len(stack)
