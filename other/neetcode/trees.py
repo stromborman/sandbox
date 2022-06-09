@@ -154,3 +154,175 @@ def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'Tre
         except:
             break
     return ans
+
+
+"""
+Level order traversal (aka BFS):
+    Output is a list of list, where the ith list is
+    the value of the nodes in level i (ordered left to right)
+"""
+
+def levelOrder(root: Optional[TreeNode]) -> List[List[int]]:
+    if root==None:
+        return []
+    
+    out = []
+    cur = -1
+    
+    levels = {root:0}
+    q = deque([root])
+    
+    
+    while q:
+        node = q.popleft()
+        if levels[node] > cur:
+            cur += 1
+            out.append([node.val])
+        else:
+            out[cur].append(node.val)
+        
+        if node.left:
+            levels[node.left] = levels[node] + 1
+            q.append(node.left)
+        if node.right:
+            levels[node.right] = levels[node] + 1
+            q.append(node.right)
+            
+    return out
+
+
+"""
+Right side view:
+    Return a list of the right most node values in each level
+"""
+
+def rightSideView(root: Optional[TreeNode]) -> List[int]:
+    if root==None:
+        return []
+
+    out = []
+    cur = -1
+
+    levels = {root:0}
+    q = deque([root])
+
+
+    while q:
+        node = q.popleft()
+        if levels[node] > cur:
+            cur += 1
+            out.append([node.val])
+        else:
+            out[cur].append(node.val)
+
+        if node.left:
+            levels[node.left] = levels[node] + 1
+            q.append(node.left)
+        if node.right:
+            levels[node.right] = levels[node] + 1
+            q.append(node.right)
+
+    return [item[-1] for item in out]
+
+
+"""
+Count Good Nodes in Binary Tree:
+    Given a binary tree root, a node X in the tree is named good 
+    if X.val is the max value in the path from root to X.
+    Return the number of good nodes in the binary tree.
+"""
+
+def goodNodes(root: TreeNode) -> int:
+    
+    count = 1
+    q = deque([(root,root.val)])
+    
+    while q:
+        node, maxval = q.popleft()
+        
+        for kid in [node.left,node.right]:
+            if kid:
+                q.append((kid,max(maxval,kid.val)))
+                if kid.val >= maxval:
+                    count += 1
+                    
+    return count
+
+
+"""
+Verify BST
+"""
+
+def isValidBST(root: Optional[TreeNode]) -> bool:
+    
+    def helper(low,node,high):
+        if node == None:
+            return True
+        if node.val <= low or node.val >= high:
+            return False
+        return helper(low, node.left, node.val) and helper(node.val, node.right, high)
+    
+    return helper(float('-inf'),root,float('inf'))
+
+
+
+"""
+k-th smallest element in BST
+"""
+
+def kthSmallest(root: Optional[TreeNode], k: int) -> int:
+    stack = []
+    while True:
+        while root:
+            stack.append(root)
+            root = root.left
+        root = stack.pop()
+        k -= 1
+        if k == 0:
+            return root.val
+        root = root.right
+
+
+def kthSmallestRecurvise(root: Optional[TreeNode], k: int) -> int:
+    
+    def leftHereRight(node,lst,k):
+        if node == None:
+            return
+        if len(lst) < k:
+            leftHereRight(node.left,lst,k)
+        if len(lst) < k:
+            lst.append(node.val)
+        if len(lst) < k:
+            leftHereRight(node.right,lst,k)
+        return lst
+    
+    return leftHereRight(root,[],k)[-1]
+
+
+
+"""
+Build tree from Preorder and Inorder list of values:
+    Assume that values in tree are unique
+"""
+
+def buildTree(preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+    root = TreeNode(preorder[0])
+    q = deque([(root, preorder, inorder)])
+    while q:
+        node, preorder, inorder = q.popleft()
+        split = inorder.index(node.val)
+        
+        if split != 0:
+            node.left = TreeNode(preorder[1])
+            q.append((node.left, preorder[1:split+1], inorder[:split]))
+        
+        if split < len(preorder) - 1:
+            node.right = TreeNode(preorder[split+1])
+            q.append((node.right,preorder[split+1:], inorder[split+1:]))
+    
+    return root
+
+
+
+
+

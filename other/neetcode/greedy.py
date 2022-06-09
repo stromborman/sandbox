@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 https://neetcode.io/
-1-D Dynamic Programming
+Greedy
 """
 
 from collections import defaultdict, deque

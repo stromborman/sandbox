@@ -306,12 +306,14 @@ def dfsList(root, lst): #Preorder
 
 # dfsList(test,[])
 
-# def dfsInP(root):
-#     if root == None:
-#         return
-#     dfsInP(root.left)
-#     print(root.value)
-#     dfsInP(root.right)
+
+# Just a print function
+def dfsInP(root):
+    if root == None:
+        return
+    dfsInP(root.left)
+    print(root.value)
+    dfsInP(root.right)
 
 # dfsInP(test)
 
@@ -324,6 +326,58 @@ def dfsIn(root,lst): #Inorder
     return lst
 
 # print(dfsIn(test,[]))
+
+
+def dfsInStack(root):
+    out = []
+    
+    stack = [-1]
+    while stack:
+        while root:
+            stack.append(root)
+            root = root.left
+        root = stack.pop()
+        if root != -1:
+            out.append(root.value)
+            root = root.right
+    
+    return out
+
+test = bt.tree(height=4)
+print(test)
+print(dfsInStack(test))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def dfsInStop(root,lst,k): #Inorder
+
+    if root == None:
+        return
+    print('running', root.value)
+    if len(lst) < k:
+        dfsInStop(root.left,lst,k)
+    print('adding', root.value)
+    if len(lst) < k:
+        lst.append(root.value)
+    if len(lst) < k:
+        dfsInStop(root.right,lst,k)
+    return lst
+
+# print(dfsInStop(test,[],2))
+
+
+
 
 
 """
@@ -704,7 +758,7 @@ def palFindNaive(s:str)->str:
     return best
             
     
-test = ['abba', 'abbca','abccggge','a']
-for string in test:
-    print(palFindNaive(string))    
+# test = ['abba', 'abbca','abccggge','a']
+# for string in test:
+#     print(palFindNaive(string))    
     
