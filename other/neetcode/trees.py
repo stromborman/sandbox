@@ -305,13 +305,22 @@ Build tree from Preorder and Inorder list of values:
     Assume that values in tree are unique
 """
 
+
+
 def buildTree(preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
     root = TreeNode(preorder[0])
     q = deque([(root, preorder, inorder)])
     while q:
         node, preorder, inorder = q.popleft()
+        
+        # This causes the TC to be multiplied by O(n)
+        # Can be avoided by making a hashmap for inorder val->index, ie
+        # {val: index for index,val in enumerate(inorder)}
         split = inorder.index(node.val)
         
+        # Due to the slicing below, we lose track of the global indicies
+        # for the inorder list.  So if we wanted to use a hash map
+        # this needs to be rewritten without slicing
         if split != 0:
             node.left = TreeNode(preorder[1])
             q.append((node.left, preorder[1:split+1], inorder[:split]))

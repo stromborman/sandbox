@@ -60,3 +60,25 @@ def lastStoneWeight(stones: List[int]) -> int:
         return -heap[0]
     else:
         return 0
+    
+    
+    
+"""
+K Closest Points to Origin:
+    Given an array of points in R^2 return the K closest points to the origin
+"""
+
+def kClosest(points: List[List[int]], k: int) -> List[List[int]]:
+    # One liner
+    # return heapq.nsmallest(k,points,key=lambda x:x[0]**2+x[1]**2)
+    
+    heap = []
+    for point in points:
+        norm = point[0]**2 + point[1]**2
+        if len(heap) < k:
+            heapq.heappush(heap,(-norm,point))
+        elif len(heap) == k:
+            heapq.heappushpop(heap,(-norm,point))
+    return [point for n,point in heap]
+
+
