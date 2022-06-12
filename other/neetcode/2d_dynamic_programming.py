@@ -112,3 +112,48 @@ def change(amount: int, coins: List[int]) -> int:
                 ans[i][tar] += ans[i][tar-coin]
     
     return ans[-1][-1]
+
+"""
+Interleaving String:
+    Given strings s1, s2, and s3, find whether s3 is formed 
+    by an interleaving (think ripple shuffle) of s1 and s2.
+"""
+
+def isInterleave(s1: str, s2: str, s3: str) -> bool:
+    l1, l2, l3 = len(s1), len(s2), len(s3)
+    
+    if l1 + l2 != l3:
+        return False
+    
+    if l3 == 0:
+        return True
+    
+    if ''.join(sorted(s1+s2)) != ''.join(sorted(s3)):
+        return False
+    
+    work = {(0, 0)}
+    new = set([])
+    for c in s3:
+        new = set([])
+        for pair in work:
+            if pair[0] < l1:
+                if s1[pair[0]] == c:
+                    new.add((pair[0]+1,pair[1]))
+            if pair[1] < l2:
+                if s2[pair[1]] == c:
+                    new.add((pair[0],pair[1]+1))
+        if new == {[]}:
+                return False
+            
+        work = new
+    return True
+        
+
+
+
+
+
+
+
+
+
