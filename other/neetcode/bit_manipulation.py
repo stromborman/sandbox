@@ -86,3 +86,44 @@ def singleNumber(nums: List[int]) -> int:
     for num in nums[1:]:
         out = out ^ num
     return out
+
+"""
+Sum of Two Integers:
+    Given two integers a and b, return the sum of the two integers 
+    without using the operators + and -.
+"""
+
+def add(a,b): # a,b >=0 or a,b <= 0
+    i = 0
+    while b!=0 and i < 10:
+        i+= 1
+        c = (a&b)<<1
+        a = a^b
+        b = c
+    return a
+
+def sub(a,b): # a >= b >= 0
+    i = 0
+    while b!=0 and i < 10:
+        i+= 1
+        c = (~a&b)<<1
+        a = a^b
+        b = c
+    return a
+    
+def getSum(a: int, b: int) -> int:  
+    if a*b >= 0:
+        return add(a,b)
+    
+    # ensure |a| >= |b|
+    if abs(a) < abs(b):
+        return getSum(b, a)
+    
+    if a < 0:
+        return -sub(abs(a),b)
+    
+    else:
+        return sub(a,abs(b))
+
+    
+

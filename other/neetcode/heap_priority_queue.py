@@ -82,3 +82,40 @@ def kClosest(points: List[List[int]], k: int) -> List[List[int]]:
     return [point for n,point in heap]
 
 
+"""
+Median Finder from Stream
+"""
+
+class MedianFinder:
+
+    def __init__(self):
+        self.maxH = []
+        self.minH = []
+        
+    def addNum(self, num: int) -> None:
+        if self.maxH == self.minH == []:
+            heapq.heappush(self.minH, num)
+        else:
+            if num >= self.findMedian():
+                heapq.heappush(self.minH, num)
+            else:
+                heapq.heappush(self.maxH, -num)
+
+            n = len(self.maxH) - len(self.minH)
+            if n == -2:
+                heapq.heappush(self.maxH, -heapq.heappop(self.minH))
+            elif n == 2:
+                heapq.heappush(self.minH, -heapq.heappop(self.maxH))        
+
+    def findMedian(self) -> float:
+        heapMax = self.maxH
+        heapMin = self.minH
+        
+        if len(heapMax) == 0 and len(heapMin)== 0:
+            return 0
+        if len(heapMax) > len(heapMin):
+            return -heapMax[0]
+        elif len(heapMin) > len(heapMax):
+            return heapMin[0]
+        else:
+            return (-heapMax[0]+heapMin[0])/2
