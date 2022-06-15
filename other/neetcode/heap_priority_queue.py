@@ -89,14 +89,14 @@ Median Finder from Stream
 class MedianFinder:
 
     def __init__(self):
-        self.maxH = []
-        self.minH = []
+        self.maxH = [] # max heap for numbers <= current median (is a min heap, but num stored as -num)
+        self.minH = [] # min heap for numbers >= current median
         
     def addNum(self, num: int) -> None:
-        if self.maxH == self.minH == []:
+        if self.minH == []:
             heapq.heappush(self.minH, num)
         else:
-            if num >= self.findMedian():
+            if num >= self.minH[0]:
                 heapq.heappush(self.minH, num)
             else:
                 heapq.heappush(self.maxH, -num)
@@ -107,15 +107,12 @@ class MedianFinder:
             elif n == 2:
                 heapq.heappush(self.minH, -heapq.heappop(self.maxH))        
 
-    def findMedian(self) -> float:
-        heapMax = self.maxH
-        heapMin = self.minH
-        
-        if len(heapMax) == 0 and len(heapMin)== 0:
+    def findMedian(self) -> float:       
+        if len(self.maxH) == 0 and len(self.minH)== 0:
             return 0
-        if len(heapMax) > len(heapMin):
-            return -heapMax[0]
-        elif len(heapMin) > len(heapMax):
-            return heapMin[0]
+        if len(self.maxH) > len(self.minH):
+            return -self.maxH[0]
+        elif len(self.minH) > len(self.maxH):
+            return self.minH[0]
         else:
-            return (-heapMax[0]+heapMin[0])/2
+            return (-self.maxH[0]+self.minH[0])/2
